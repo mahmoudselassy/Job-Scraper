@@ -1,15 +1,20 @@
-const puppeteer = require("puppeteer");
+const playwright = require("playwright");
 
 async function scrape() {
-    const browser = await puppeteer.launch({});
-    const page = await browser.newPage();
+    const browser = await playwright.chromium.launch({});
 
-    await page.goto("https://www.thesaurus.com/browse/smart");
-    var element = await page.waitForSelector(
-        "#meanings > div.css-ixatld.e15rdun50 > ul > li:nth-child(1) > a"
+    const page = await browser.newPage();
+    await page.goto("https://wuzzuf.net/search/jobs/?q=Backend+Engineer", {
+        waitUntil: "load",
+    });
+    /* await page.waitForSelector(
+        "#app > div > div.css-1omce3u > div > div > div.css-13hf9up.e1v1l3u10 > div.css-osele2"
+    );*/
+    const num = await page.$eval(
+        "#app > div > div.css-1omce3u > div > div > div.css-13hf9up.e1v1l3u10 > div.css-osele2 > span.css-xkh9ud > strong",
+        (el) => el.textContent
     );
-    var text = await page.evaluate((element) => element.textContent, element);
-    console.log(text);
-    browser.close();
+    console.log(num);
+    await browser.close();
 }
 scrape();
