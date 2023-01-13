@@ -19,16 +19,20 @@ async function scrape(jobTitle) {
   const html = await page.evaluate(() => document.body.innerHTML);
   const $ = cheerio.load(html);
   const jobsNumber = Number($(jobsNumberSelector).text());
-
-  /* 
   const NumberOfPages = Math.ceil(jobsNumber / 15);
   for (let i = 0; i < NumberOfPages; i++) {
     await page.goto(`${url}&start=${i}`, pageOptions);
-    const jobsLinks = await page.$$(jobPostLinkSelector);
-    for (const jobsLink of jobsLinks) {
-      console.log(await (await jobsLink.getProperty("href")).jsonValue());
-    }
-  }*/
+    const html = await page.evaluate(() => document.body.innerHTML);
+    const $ = cheerio.load(html);
+    const jobsLinks = $(jobPostLinkSelector);
+    jobsLinks.each((index, link) => {
+      const job = {
+        job_title: $(link).text(),
+        link: `https://wuzzuf.net${$(link).attr("href")}`,
+      };
+      console.log();
+    });
+  }
   browser.close();
 }
 /*
