@@ -17,49 +17,54 @@ const skillsSelector = "#app > div > main > article > section.css-3kx5e2 > div.c
 
 const experienceSelector = "#app > div > main > article > section.css-3kx5e2 > div:nth-child(2) > span.css-47jx3m > span";
 
-async function scrape(jobTitle) {
-  const browser = await playwright.chromium.launch();
-  const page = await browser.newPage();
+let browser;
+
+const loadHtml = async (url) => {
   const pageOptions = {
     waitUntil: "load",
     timeout: 0,
   };
-  const url = `https://wuzzuf.net/search/jobs/?q=${jobTitle}`;
+  const page = await browser.newPage();
   await page.goto(url, pageOptions);
   let html = await page.evaluate(() => document.body.innerHTML);
-  let $ = cheerio.load(html);
-  const jobsNumber = Number($(jobsNumberSelector).text());
+  page.close();
+  return cheerio.load(html);
+};
+
+const scrapeJobPage = (searchPage) => {
+  return async (index, link) => {
+    const job = {
+      job_title: `${searchPage(link).text()}`,
+      company: "",
+      city: "",
+      from: "",
+      skills: [],
+      YearsOfExperience: "",
+      link: `https://wuzzuf.net${searchPage(link).attr("href")}`,
+    };
+    const jobPage = await loadHtml(job.link);
+    job.company = jobPage(companySelector).text();
+    job.city = jobPage(locationSelector)
+      .text()
+      .slice(jobPage(locationSelector).text().lastIndexOf("-") + 1);
+    job.from = jobPage(fromSelector).text();
+    job.YearsOfExperience = jobPage(experienceSelector).text();
+    jobPage(skillsSelector).each((_, skill) => job.skills.push(jobPage(skill).text()));
+    job.skills = job.skills.join(",");
+    console.log(job);
+  };
+};
+
+async function scrape(jobTitle) {
+  browser = await playwright.chromium.launch();
+  const url = `https://wuzzuf.net/search/jobs/?q=${jobTitle}`;
+  let searchPage = await loadHtml(url);
+  const jobsNumber = Number(searchPage(jobsNumberSelector).text());
   const NumberOfPages = Math.ceil(jobsNumber / 15);
-  for (let i = 0; i < NumberOfPages; i++) {
-    await page.goto(`${url}&start=${i}`, pageOptions);
-    html = await page.evaluate(() => document.body.innerHTML);
-    $ = cheerio.load(html);
-    const jobsLinks = $(jobPostLinkSelector);
-    jobsLinks.each(async (index, link) => {
-      const job = {
-        job_title: `${$(link).text()}`,
-        company: "",
-        city: "",
-        from: "",
-        skills: [],
-        YearsOfExperience: "",
-        link: `https://wuzzuf.net${$(link).attr("href")}`,
-      };
-      const jobPage = await browser.newPage();
-      await jobPage.goto(job.link, pageOptions);
-      html = await jobPage.evaluate(() => document.body.innerHTML);
-      $ = cheerio.load(html);
-      job.company = $(companySelector).text();
-      job.city = $(locationSelector)
-        .text()
-        .slice($(locationSelector).text().lastIndexOf("-") + 1);
-      job.from = $(fromSelector).text();
-      job.YearsOfExperience = $(experienceSelector).text();
-      $(skillsSelector).each((_, skill) => job.skills.push($(skill).text()));
-      job.skills = job.skills.join(",");
-      console.log(job);
-      jobPage.close();
-    });
+  for (let i = 0; i < 1; i++) {
+    searchPage = await loadHtml(`${url}&start=${i}`, browser);
+    const jobsLinks = searchPage(jobPostLinkSelector);
+    jobsLinks.each(scrapeJobPage(searchPage));
   }
 }
 /*
