@@ -3,9 +3,7 @@ const fs = require("fs");
 const csv = require("csv-stringify");
 const { parse } = require("node-html-parser");
 
-//const jobTitles = ["Back-End Developer", "Full Stack Developer", "Mobile Developer", "UI UX Designer", "IT Specialist", "Software Engineer", "Database Administrator", "Data Analyst", "Front-End Developer", "Tester", "Network Engineer", "Cyber Security", "Machine Learning Engineer", "Embedded Systems Engineer", "Game Developer", "Data Engineer", "Dev-Ops"];
-
-const jobTitles = ["Cyber Security", "Dev-Ops"];
+const jobTitles = ["Back-End Developer", "Full Stack Developer", "Mobile Developer", "UI UX Designer", "IT Specialist", "Software Engineer", "Database Administrator", "Data Analyst", "Front-End Developer", "Software Tester", "Network Engineer", "Cyber Security Engineer", "Machine Learning Engineer", "Embedded Systems Engineer", "Game Developer", "Data Engineer", "DevOps Engineer"];
 
 const jobsNumberSelector = "#app > div > div.css-1omce3u > div > div > div.css-13hf9up.e1v1l3u10 > div.css-osele2 > span.css-xkh9ud > strong";
 
@@ -37,7 +35,6 @@ const loadHtml = async (url) => {
     try {
       await page.goto(url, pageOptions);
     } catch (e) {
-      console.log(e);
       continue;
     }
     break;
@@ -76,7 +73,8 @@ const scrape = async (jobTitle) => {
     (err, output) => fs.appendFileSync(`./scraped_data/${jobTitle}.csv`, output)
   );
   browser = await playwright.chromium.launch();
-  const url = `https://wuzzuf.net/search/jobs/?q=${jobTitle}`;
+  //const url = `https://wuzzuf.net/search/jobs/?q=${jobTitle}`;
+  const url = `https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}`;
   let searchPage = await loadHtml(url);
   const jobsNumber = Number(searchPage.querySelector(jobsNumberSelector).innerText.replace(",", ""));
   const NumberOfPages = Math.ceil(jobsNumber / 15);
@@ -99,8 +97,5 @@ const scrape = async (jobTitle) => {
     console.log("start:", jobTitle);
     await scrape(jobTitle);
     console.log("end:", jobTitle);
-    if (browser.isConnected()) {
-      await browser.close();
-    }
   }
 })();
