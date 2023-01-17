@@ -76,7 +76,7 @@ const scrape = async (jobTitle) => {
   //const url = `https://wuzzuf.net/search/jobs/?q=${jobTitle}`;
   const url = `https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}`;
   let searchPage = await loadHtml(url);
-  const jobsNumber = Number(searchPage.querySelector(jobsNumberSelector).innerText.replace(",", ""));
+  const jobsNumber = searchPage.querySelector(jobsNumberSelector) ? Number(searchPage.querySelector(jobsNumberSelector).innerText.replace(",", "")) : 0;
   const NumberOfPages = Math.ceil(jobsNumber / 15);
   console.log(jobTitle, ":", jobsNumber);
   for (let i = 0; i < NumberOfPages; i++) {
