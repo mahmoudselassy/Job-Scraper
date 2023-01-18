@@ -1,35 +1,22 @@
-const playwright = require("playwright");
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const HtmlFetcher_1 = require("./HtmlFetcher");
 const fs = require("fs");
 const csv = require("csv-stringify");
-const { parse } = require("node-html-parser");
-
 const jobTitles = ["Back-End Developer", "Full Stack Developer", "Mobile Developer", "UI UX Designer", "IT Specialist", "Software Engineer", "Database Administrator", "Data Analyst", "Front-End Developer", "Software Tester", "Network Engineer", "Cyber Security Engineer", "Machine Learning Engineer", "Embedded Systems Engineer", "Game Developer", "Data Engineer", "DevOps Engineer"];
-
 const jobsNumberSelector = "#app > div > div.css-1omce3u > div > div > div.css-13hf9up.e1v1l3u10 > div.css-osele2 > span.css-xkh9ud > strong";
-
 const jobPostLinkSelector = "#app > div > div.css-1omce3u > div > div > div:nth-child(2) > div > div > div.css-laomuu > h2 > a";
-
 const companySelector = "#app > div > main > article > section.css-dy1y6u > div > strong > div > a";
-
 const locationSelector = "#app > div > main > article > section.css-dy1y6u > div > strong";
-
 const fromSelector = "#app > div > main > article > section.css-dy1y6u > div > span";
-
 const skillsSelector = "#app > div > main > article > section.css-3kx5e2 > div.css-s2o0yh > a > span > span > span";
-
 const experienceSelector = "#app > div > main > article > section.css-3kx5e2 > div:nth-child(2) > span.css-47jx3m > span";
-
 const jobDescriptionSelector = "#app > div > main > article > section:nth-child(4)";
-
 const jobRequirementsSelector = "#app > div > main > article > section:nth-child(5)";
-
+/*
 let browser;
 
 const loadHtml = async (url) => {
-  const pageOptions = {
-    waitUntil: "load",
-    timeout: 0,
-  };
   const page = await browser.newPage();
   while (true) {
     try {
@@ -98,4 +85,13 @@ const scrape = async (jobTitle) => {
     await scrape(jobTitle);
     console.log("end:", jobTitle);
   }
+})();
+*/
+(async () => {
+    let x = Date.now();
+    for (let i = 0; i < 2; i++) {
+        const p = new HtmlFetcher_1.HtmlFetcher("https://www.geeksforgeeks.org/how-to-use-getters-setters-in-typescript/");
+        await p.fetch();
+    }
+    console.log((Date.now() - x) / 1000);
 })();
