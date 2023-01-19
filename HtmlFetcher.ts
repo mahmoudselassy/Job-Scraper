@@ -22,7 +22,7 @@ class HtmlFetcher {
       }
       break;
     }
-    const html = await page.evaluate(() => document.body.innerHTML);
+    const html = await page.content();
     await page.close();
     await browser.close();
     return html;

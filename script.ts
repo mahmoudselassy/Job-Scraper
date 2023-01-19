@@ -1,7 +1,6 @@
+import { CSVFile } from "./CSVFile";
 import { JobPage } from "./JobPage";
 import { SearchPage } from "./SearchPage";
-const fs = require("fs");
-const csv = require("csv-stringify");
 
 const jobTitles = ["Back-End Developer", "Full Stack Developer", "Mobile Developer", "UI UX Designer", "IT Specialist", "Software Engineer", "Database Administrator", "Data Analyst", "Front-End Developer", "Software Tester", "Network Engineer", "Cyber Security Engineer", "Machine Learning Engineer", "Embedded Systems Engineer", "Game Developer", "Data Engineer", "DevOps Engineer"];
 
@@ -21,40 +20,26 @@ const jobPageSelectors = new Map([
 
 //const url = `https://wuzzuf.net/search/jobs/?q=${jobTitle}`;
 //const url = `https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}`;
-/*
-const scrape = async (jobTitle: string) => {
+const WUZZUFScraper = async (jobTitle: string) => {
+  const file = new CSVFile(jobTitle, `${__dirname}/scraped_data`, ["Title", "Company", "City", "Date", "Experience", "JobDescription", "JobRequirements", "Url"]);
   const url = `https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}`;
-  let searchPage = new SearchPage(url, jobsNumberSelector, jobPostLinkSelector);
-  const jobsNumber = await searchPage.scrapeJobsNumber();
+  let searchPage = new SearchPage(url);
+  const jobsNumber = await searchPage.scrapeJobsNumber(jobsNumberSelector);
   const jobsPerPage = 15;
   const NumberOfPages = Math.ceil(jobsNumber / jobsPerPage);
   for (let i = 0; i < NumberOfPages; i++) {
-    searchPage = new SearchPage(`https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}&start=${i}`, jobsNumberSelector, jobPostLinkSelector);
-    const jobsLinks = await searchPage.scrapeJobsLinks();
+    searchPage = new SearchPage(`https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}&start=${i}`);
+    const jobsLinks = await searchPage.scrapeJobsLinks(jobPostLinkSelector);
     for (const jobLink of jobsLinks) {
       const jobPage = new JobPage(jobLink, jobPageSelectors);
-      console.log(await jobPage.scrape());
+      const job = await jobPage.scrape();
+      file.insertRow(job);
     }
   }
 };
 
 (async () => {
   for (const jobTitle of jobTitles) {
-    console.log("start:", jobTitle);
-    await scrape(jobTitle);
-    console.log("end:", jobTitle);
+    await WUZZUFScraper(jobTitle);
   }
-})();*/
-/*
-  fs.writeFileSync(`./scraped_data/${jobTitle}.csv`, "");
-  csv.stringify(
-    [],
-    {
-      header: true,
-      columns: ["Title", "Company", "City", "Date", "Experience", "JobDescription", "JobRequirements", "Url"],
-    },
-    (er: any, output: any) => fs.appendFileSync(`./scraped_data/${jobTitle}.csv`, output)
-  );
-        csv.stringify([job], (err, output) => fs.appendFileSync(`./scraped_data/${jobTitle}.csv`, output));
-
-  */
+})();

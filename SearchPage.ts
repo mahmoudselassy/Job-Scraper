@@ -6,23 +6,23 @@ class SearchPage {
   private _jobsUrls: string[] = [];
   private _isParsed = false;
   private _htmlParser?: HtmlParser;
-  constructor(private _url: string, private _jobsNumberSelector: string, private _jobPostLinkSelector: string) {}
+  constructor(private _url: string) {}
   private async _parse() {
     const html = await HtmlFetcher.fetch(this._url);
     this._htmlParser = new HtmlParser(html);
     this._isParsed = true;
   }
-  public async scrapeJobsNumber() {
+  public async scrapeJobsNumber(jobsNumberSelector: string) {
     if (!this._isParsed) {
       await this._parse();
-      this._jobsNumber = parseNumber(this._htmlParser?.selectText(this._jobsNumberSelector)!);
+      this._jobsNumber = parseNumber(this._htmlParser?.selectText(jobsNumberSelector)!);
     }
     return this._jobsNumber;
   }
-  public async scrapeJobsLinks() {
+  public async scrapeJobsLinks(jobPostLinkSelector: string) {
     if (!this._isParsed) {
       await this._parse();
-      this._htmlParser?.selectAllElements(this._jobPostLinkSelector).map((a: HTMLElement, index: number) => {
+      this._htmlParser?.selectAllElements(jobPostLinkSelector).map((a: HTMLElement, index: number) => {
         this._jobsUrls.push(`https://wuzzuf.net${a.getAttribute("href")}`.split("?")[0]);
       });
     }
