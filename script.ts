@@ -1,5 +1,5 @@
-import { HtmlFetcher } from "./HtmlFetcher";
-
+import { JobPage } from "./JobPage";
+import { SearchPage } from "./SearchPage";
 const fs = require("fs");
 const csv = require("csv-stringify");
 
@@ -9,82 +9,32 @@ const jobsNumberSelector = "#app > div > div.css-1omce3u > div > div > div.css-1
 
 const jobPostLinkSelector = "#app > div > div.css-1omce3u > div > div > div:nth-child(2) > div > div > div.css-laomuu > h2 > a";
 
-const companySelector = "#app > div > main > article > section.css-dy1y6u > div > strong > div > a";
+const jobPageSelectors = new Map([
+  ["#app > div > main > article > section.css-dy1y6u > div > h1", "Title"],
+  ["#app > div > main > article > section.css-dy1y6u > div > strong > div > a", "Company"],
+  ["#app > div > main > article > section.css-dy1y6u > div > strong", "City"],
+  ["#app > div > main > article > section.css-dy1y6u > div > span", "Date"],
+  ["#app > div > main > article > section.css-3kx5e2 > div:nth-child(2) > span.css-47jx3m > span", "Experience"],
+  ["#app > div > main > article > section:nth-child(4)", "JobDescription"],
+  ["#app > div > main > article > section:nth-child(5)", "JobRequirements"],
+]);
 
-const locationSelector = "#app > div > main > article > section.css-dy1y6u > div > strong";
+//const url = `https://wuzzuf.net/search/jobs/?q=${jobTitle}`;
+//const url = `https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}`;
 
-const fromSelector = "#app > div > main > article > section.css-dy1y6u > div > span";
-
-const skillsSelector = "#app > div > main > article > section.css-3kx5e2 > div.css-s2o0yh > a > span > span > span";
-
-const experienceSelector = "#app > div > main > article > section.css-3kx5e2 > div:nth-child(2) > span.css-47jx3m > span";
-
-const jobDescriptionSelector = "#app > div > main > article > section:nth-child(4)";
-
-const jobRequirementsSelector = "#app > div > main > article > section:nth-child(5)";
-/*
-let browser;
-
-const loadHtml = async (url) => {
-  const page = await browser.newPage();
-  while (true) {
-    try {
-      await page.goto(url, pageOptions);
-    } catch (e) {
-      continue;
-    }
-    break;
-  }
-  let html = await page.evaluate(() => document.body.innerHTML);
-  page.close();
-  return parse(html);
-};
-
-const scrapeJobPage = async (jobLink) => {
-  const jobPage = await loadHtml(`https://wuzzuf.net${jobLink.getAttribute("href")}`);
-  const job = {
-    job_title: jobLink ? jobLink.innerHTML : "",
-    company: jobPage.querySelector(companySelector) ? jobPage.querySelector(companySelector).innerText : "",
-    city: jobPage.querySelector(locationSelector) ? jobPage.querySelector(locationSelector).innerText.split(";")[1] : "",
-    from: jobPage.querySelector(fromSelector) ? jobPage.querySelector(fromSelector).innerText : "",
-    skills: [],
-    YearsOfExperience: jobPage.querySelector(experienceSelector) ? jobPage.querySelector(experienceSelector).innerText : "",
-    JobDescription: jobPage.querySelector(jobDescriptionSelector) ? jobPage.querySelector(jobDescriptionSelector).textContent : "",
-    JobRequirements: jobPage.querySelector(jobRequirementsSelector) ? jobPage.querySelector(jobRequirementsSelector).textContent : "",
-    link: `https://wuzzuf.net${jobLink.getAttribute("href")}`.split("?")[0],
-  };
-  jobPage.querySelectorAll(skillsSelector).forEach((skill, index) => job.skills.push(skill.innerText));
-  job.skills = job.skills.join(",");
-  return job;
-};
-
-const scrape = async (jobTitle) => {
-  fs.writeFileSync(`./scraped_data/${jobTitle}.csv`, "");
-  csv.stringify(
-    [],
-    {
-      header: true,
-      columns: ["job_title", "company", "city", "from", "skills", "YearsOfExperience", "JobDescription", "JobRequirements", "link"],
-    },
-    (err, output) => fs.appendFileSync(`./scraped_data/${jobTitle}.csv`, output)
-  );
-  browser = await playwright.chromium.launch();
-  //const url = `https://wuzzuf.net/search/jobs/?q=${jobTitle}`;
+const scrape = async (jobTitle: string) => {
   const url = `https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}`;
-  let searchPage = await loadHtml(url);
-  const jobsNumber = searchPage.querySelector(jobsNumberSelector) ? Number(searchPage.querySelector(jobsNumberSelector).innerText.replace(",", "")) : 0;
-  const NumberOfPages = Math.ceil(jobsNumber / 15);
-  console.log(jobTitle, ":", jobsNumber);
+  let searchPage = new SearchPage(url, jobsNumberSelector, jobPostLinkSelector);
+  const jobsNumber = await searchPage.scrapeJobsNumber();
+  const jobsPerPage = 15;
+  const NumberOfPages = Math.ceil(jobsNumber / jobsPerPage);
   for (let i = 0; i < NumberOfPages; i++) {
-    searchPage = await loadHtml(`${url}&start=${i}`);
-    const jobsLinks = searchPage.querySelectorAll(jobPostLinkSelector);
+    searchPage = new SearchPage(`https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}&start=${i}`, jobsNumberSelector, jobPostLinkSelector);
+    const jobsLinks = await searchPage.scrapeJobsLinks();
     for (const jobLink of jobsLinks) {
-      const job = await scrapeJobPage(jobLink);
-      csv.stringify([job], (err, output) => fs.appendFileSync(`./scraped_data/${jobTitle}.csv`, output));
+      const jobPage = new JobPage(jobLink, jobPageSelectors);
+      console.log(await jobPage.scrape());
     }
-  }
-  if (browser.isConnected()) {
-    await browser.close();
   }
 };
 
@@ -95,12 +45,16 @@ const scrape = async (jobTitle) => {
     console.log("end:", jobTitle);
   }
 })();
-*/
-(async () => {
-  let x = Date.now();
-  for (let i = 0; i < 2; i++) {
-    const p = new HtmlFetcher("https://www.geeksforgeeks.org/how-to-use-getters-setters-in-typescript/");
-    await p.fetch();
-  }
-  console.log((Date.now() - x) / 1000);
-})();
+/*
+  fs.writeFileSync(`./scraped_data/${jobTitle}.csv`, "");
+  csv.stringify(
+    [],
+    {
+      header: true,
+      columns: ["Title", "Company", "City", "Date", "Experience", "JobDescription", "JobRequirements", "Url"],
+    },
+    (er: any, output: any) => fs.appendFileSync(`./scraped_data/${jobTitle}.csv`, output)
+  );
+        csv.stringify([job], (err, output) => fs.appendFileSync(`./scraped_data/${jobTitle}.csv`, output));
+
+  */
