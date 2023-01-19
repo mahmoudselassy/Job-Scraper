@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const CSVFile_1 = require("./CSVFile");
-const JobPage_1 = require("./JobPage");
-const SearchPage_1 = require("./SearchPage");
+const CSVFile_1 = require("./Classes/CSVFile");
+const JobPage_1 = require("./Classes/JobPage");
+const SearchPage_1 = require("./Classes/SearchPage");
 const jobTitles = ["Back-End Developer", "Full Stack Developer", "Mobile Developer", "UI UX Designer", "IT Specialist", "Software Engineer", "Database Administrator", "Data Analyst", "Front-End Developer", "Software Tester", "Network Engineer", "Cyber Security Engineer", "Machine Learning Engineer", "Embedded Systems Engineer", "Game Developer", "Data Engineer", "DevOps Engineer"];
 const jobsNumberSelector = "#app > div > div.css-1omce3u > div > div > div.css-13hf9up.e1v1l3u10 > div.css-osele2 > span.css-xkh9ud > strong";
 const jobPostLinkSelector = "#app > div > div.css-1omce3u > div > div > div:nth-child(2) > div > div > div.css-laomuu > h2 > a";

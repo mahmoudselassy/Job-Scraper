@@ -1,6 +1,6 @@
-import { CSVFile } from "./CSVFile";
-import { JobPage } from "./JobPage";
-import { SearchPage } from "./SearchPage";
+import { CSVFile } from "./Classes/CSVFile";
+import { JobPage } from "./Classes/JobPage";
+import { SearchPage } from "./Classes/SearchPage";
 
 const jobTitles = ["Back-End Developer", "Full Stack Developer", "Mobile Developer", "UI UX Designer", "IT Specialist", "Software Engineer", "Database Administrator", "Data Analyst", "Front-End Developer", "Software Tester", "Network Engineer", "Cyber Security Engineer", "Machine Learning Engineer", "Embedded Systems Engineer", "Game Developer", "Data Engineer", "DevOps Engineer"];
 
