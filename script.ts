@@ -21,7 +21,7 @@ const jobPageSelectors = new Map([
 
 //const url = `https://wuzzuf.net/search/jobs/?q=${jobTitle}`;
 //const url = `https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}`;
-
+/*
 const scrape = async (jobTitle: string) => {
   const url = `https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}`;
   let searchPage = new SearchPage(url, jobsNumberSelector, jobPostLinkSelector);
@@ -44,7 +44,7 @@ const scrape = async (jobTitle: string) => {
     await scrape(jobTitle);
     console.log("end:", jobTitle);
   }
-})();
+})();*/
 /*
   fs.writeFileSync(`./scraped_data/${jobTitle}.csv`, "");
   csv.stringify(

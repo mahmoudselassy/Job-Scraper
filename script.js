@@ -1,7 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const JobPage_1 = require("./JobPage");
-const SearchPage_1 = require("./SearchPage");
 const fs = require("fs");
 const csv = require("csv-stringify");
 const jobTitles = ["Back-End Developer", "Full Stack Developer", "Mobile Developer", "UI UX Designer", "IT Specialist", "Software Engineer", "Database Administrator", "Data Analyst", "Front-End Developer", "Software Tester", "Network Engineer", "Cyber Security Engineer", "Machine Learning Engineer", "Embedded Systems Engineer", "Game Developer", "Data Engineer", "DevOps Engineer"];
@@ -18,28 +16,30 @@ const jobPageSelectors = new Map([
 ]);
 //const url = `https://wuzzuf.net/search/jobs/?q=${jobTitle}`;
 //const url = `https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}`;
-const scrape = async (jobTitle) => {
-    const url = `https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}`;
-    let searchPage = new SearchPage_1.SearchPage(url, jobsNumberSelector, jobPostLinkSelector);
-    const jobsNumber = await searchPage.scrapeJobsNumber();
-    const jobsPerPage = 15;
-    const NumberOfPages = Math.ceil(jobsNumber / jobsPerPage);
-    for (let i = 0; i < NumberOfPages; i++) {
-        searchPage = new SearchPage_1.SearchPage(`https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}&start=${i}`, jobsNumberSelector, jobPostLinkSelector);
-        const jobsLinks = await searchPage.scrapeJobsLinks();
-        for (const jobLink of jobsLinks) {
-            const jobPage = new JobPage_1.JobPage(jobLink, jobPageSelectors);
-            console.log(await jobPage.scrape());
-        }
+/*
+const scrape = async (jobTitle: string) => {
+  const url = `https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}`;
+  let searchPage = new SearchPage(url, jobsNumberSelector, jobPostLinkSelector);
+  const jobsNumber = await searchPage.scrapeJobsNumber();
+  const jobsPerPage = 15;
+  const NumberOfPages = Math.ceil(jobsNumber / jobsPerPage);
+  for (let i = 0; i < NumberOfPages; i++) {
+    searchPage = new SearchPage(`https://wuzzuf.net/search/jobs/?filters%5Bpost_date%5D%5B0%5D=within_24_hours&q=${jobTitle}&start=${i}`, jobsNumberSelector, jobPostLinkSelector);
+    const jobsLinks = await searchPage.scrapeJobsLinks();
+    for (const jobLink of jobsLinks) {
+      const jobPage = new JobPage(jobLink, jobPageSelectors);
+      console.log(await jobPage.scrape());
     }
+  }
 };
+
 (async () => {
-    for (const jobTitle of jobTitles) {
-        console.log("start:", jobTitle);
-        await scrape(jobTitle);
-        console.log("end:", jobTitle);
-    }
-})();
+  for (const jobTitle of jobTitles) {
+    console.log("start:", jobTitle);
+    await scrape(jobTitle);
+    console.log("end:", jobTitle);
+  }
+})();*/
 /*
   fs.writeFileSync(`./scraped_data/${jobTitle}.csv`, "");
   csv.stringify(
